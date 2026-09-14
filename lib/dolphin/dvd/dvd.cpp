@@ -1,4 +1,5 @@
 #include <cstdio>
+#include "../../melee_scaffold.hpp"
 #include <cstdlib>
 #include <aurora/dvd.h>
 #include <dolphin/dvd.h>
@@ -999,7 +1000,7 @@ s32 DVDConvertPathToEntrynum(const char* pathPtr) {
   /* OpenMelee TEMPORARY diagnostic: every disc path the game resolves.
    * OPENMELEE_TRACE_DVDOPEN=1 */
   if (pathPtr != nullptr && std::getenv("OPENMELEE_TRACE_DVDOPEN") != nullptr) {
-    std::fprintf(stderr, "PROGDBG DVDPATH %s\n", pathPtr);
+    OPENMELEE_PROBE("PROGDBG DVDPATH %s\n", pathPtr);
     std::fflush(stderr);
   }
   std::lock_guard lock(s_fstLock);

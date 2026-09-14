@@ -1,4 +1,5 @@
 #include "gx.hpp"
+#include "../../melee_scaffold.hpp"
 #include "__gx.h"
 #include "dolphin/gd/GDGeometry.h"
 
@@ -201,7 +202,7 @@ void GXSetVtxDesc(GXAttr attr, GXAttrType type) {
    * that is missing its POS entry can be attributed to the code path that built
    * it. OPENMELEE_VTXCALL_LOG=1. */
   if (melee_vtxcall_trace()) {
-    std::fprintf(stderr, "PROGDBG SETVTXDESC attr=%u type=%u caller=%p\n", static_cast<unsigned>(attr),
+    OPENMELEE_PROBE("PROGDBG SETVTXDESC attr=%u type=%u caller=%p\n", static_cast<unsigned>(attr),
                  static_cast<unsigned>(type), MELEE_TRACE_RETURN_ADDRESS());
   }
   SETVCDATTR(attr, type);
@@ -228,7 +229,7 @@ void GXSetVtxDescv(GXVtxDescList* list) {
 
 void GXClearVtxDesc() {
   if (melee_vtxcall_trace()) {
-    std::fprintf(stderr, "PROGDBG CLEARVTXDESC caller=%p\n", MELEE_TRACE_RETURN_ADDRESS());
+    OPENMELEE_PROBE("PROGDBG CLEARVTXDESC caller=%p\n", MELEE_TRACE_RETURN_ADDRESS());
   }
   __gx->vcdLo = 0;
   SET_REG_FIELD(0, __gx->vcdLo, 2, 9, 1); // GX_VA_POS = GX_DIRECT

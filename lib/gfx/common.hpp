@@ -158,7 +158,7 @@ private:
          * information makes a frame-budget overrun indistinguishable from a
          * garbage vertex count. Say which. */
         std::fprintf(stderr,
-                     "PROGDBG_GFXBUF overflow: need %zu, capacity %zu, "
+                     "OpenMelee: gfx ByteBuffer overflow: need %zu, capacity %zu, "
                      "current length %zu\n",
                      size, m_capacity, m_length);
         std::fflush(stderr);
@@ -210,7 +210,7 @@ inline constexpr uint64_t IndexBufferSize = 2097152;     // 2mb
  * frame -- measured at 33816576 bytes against the old 33554432 cap, i.e.
  * a real budget overrun rather than a runaway draw. The frame packet's
  * storage ByteBuffer is a non-owned window into the mapped staging
- * buffer, so overflowing it can only abort(); see the PROGDBG_GFXBUF
+ * buffer, so overflowing it can only abort(); see the ByteBuffer-overflow
  * message in ByteBuffer::resize below, which is what measured this. */
 /* OpenMelee: raised from 48mb (2026-08-17, Track B stage sweep). Mute
  * City's track/city geometry needs slightly more than 48mb in a single

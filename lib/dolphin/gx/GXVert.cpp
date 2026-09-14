@@ -1,4 +1,5 @@
 #include "gx.hpp"
+#include "../../melee_scaffold.hpp"
 #include "__gx.h"
 #include "../../gx/fifo.hpp"
 
@@ -64,7 +65,7 @@ extern "C" {
 void GXBegin(GXPrimitive primitive, GXVtxFmt vtxFmt, u16 nVerts) {
   if (melee_trace_begin_count < melee_trace_begin_budget()) {
     ++melee_trace_begin_count;
-    std::fprintf(stderr, "PROGDBG GXBegin #%d prim=%#x fmt=%d nVerts=%u caller=%p\n", melee_trace_begin_count,
+    OPENMELEE_PROBE("PROGDBG GXBegin #%d prim=%#x fmt=%d nVerts=%u caller=%p\n", melee_trace_begin_count,
                  static_cast<unsigned>(primitive), static_cast<int>(vtxFmt), nVerts, MELEE_TRACE_RETURN_ADDRESS());
   }
   pre_begin();
@@ -108,7 +109,7 @@ void GXBeginIndexed(GXVtxFmt vtxFmt, u16 nVerts, const u16* indices, u32 nIndice
 
 void GXEnd() {
   if (melee_trace_begin_count < melee_trace_begin_budget()) {
-    std::fprintf(stderr, "PROGDBG GXEnd sInBegin=%d caller=%p\n", sInBegin, MELEE_TRACE_RETURN_ADDRESS());
+    OPENMELEE_PROBE("PROGDBG GXEnd sInBegin=%d caller=%p\n", sInBegin, MELEE_TRACE_RETURN_ADDRESS());
   }
   if (sInBegin) {
     u32 bytesWritten = aurora::gx::fifo::get_buffer_size() - sBeginFifoSize;

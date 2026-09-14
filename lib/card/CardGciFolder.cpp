@@ -1,4 +1,5 @@
 #include "CardGciFolder.hpp"
+#include "../melee_scaffold.hpp"
 
 #include <cstdio>
 #include <cstring>
@@ -177,14 +178,14 @@ ECardResult CardGciFolder::fileWrite(FileHandle& fh, const void* buf, size_t siz
       return ECardResult::IOERROR;
     }
 #ifdef __ANDROID__
-    fprintf(stderr, "PROGDBG CardGciFolder::fileWrite NOFILE fileNo=%u path=%s\n",
+    OPENMELEE_PROBE("PROGDBG CardGciFolder::fileWrite NOFILE fileNo=%u path=%s\n",
             fh.getFileNo(), fs_path_to_string(m_folderPath / file->filename).c_str());
 #endif
     return ECardResult::NOFILE;
   }
 
 #ifdef __ANDROID__
-  fprintf(stderr, "PROGDBG CardGciFolder::fileWrite NOCARD fileNo=%u m_files.size=%zu\n",
+  OPENMELEE_PROBE("PROGDBG CardGciFolder::fileWrite NOCARD fileNo=%u m_files.size=%zu\n",
           fh.getFileNo(), m_files.size());
 #endif
   return ECardResult::NOCARD;

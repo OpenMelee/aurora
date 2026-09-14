@@ -1,4 +1,5 @@
 #include "FileIO.hpp"
+#include "../melee_scaffold.hpp"
 
 #include <SDL3/SDL_iostream.h>
 #include <SDL3/SDL_filesystem.h>
@@ -69,7 +70,7 @@ bool FileIO::fileRead(void* buf, size_t length, off_t offset) {
 bool FileIO::fileWrite(const void* buf, size_t length, off_t offset) {
   if (!isReady()) {
 #ifdef __ANDROID__
-    fprintf(stderr, "PROGDBG FileIO::fileWrite not ready path=%s\n", m_path.c_str());
+    OPENMELEE_PROBE("PROGDBG FileIO::fileWrite not ready path=%s\n", m_path.c_str());
 #endif
     return false;
   }
@@ -80,7 +81,7 @@ bool FileIO::fileWrite(const void* buf, size_t length, off_t offset) {
   }
   if (stream == nullptr) {
 #ifdef __ANDROID__
-    fprintf(stderr, "PROGDBG FileIO::fileWrite open failed path=%s err=%s\n", m_path.c_str(), SDL_GetError());
+    OPENMELEE_PROBE("PROGDBG FileIO::fileWrite open failed path=%s err=%s\n", m_path.c_str(), SDL_GetError());
 #endif
     return false;
   }
@@ -97,7 +98,7 @@ bool FileIO::fileWrite(const void* buf, size_t length, off_t offset) {
     const size_t written = SDL_WriteIO(stream, src + total, length - total);
     if (written == 0) {
 #ifdef __ANDROID__
-      fprintf(stderr, "PROGDBG FileIO::fileWrite short write path=%s total=%zu/%zu err=%s\n",
+      OPENMELEE_PROBE("PROGDBG FileIO::fileWrite short write path=%s total=%zu/%zu err=%s\n",
               m_path.c_str(), total, length, SDL_GetError());
 #endif
       SDL_CloseIO(stream);
@@ -109,7 +110,7 @@ bool FileIO::fileWrite(const void* buf, size_t length, off_t offset) {
   SDL_FlushIO(stream);
   SDL_CloseIO(stream);
 #ifdef __ANDROID__
-  fprintf(stderr, "PROGDBG FileIO::fileWrite ok path=%s offset=%ld length=%zu\n",
+  OPENMELEE_PROBE("PROGDBG FileIO::fileWrite ok path=%s offset=%ld length=%zu\n",
           m_path.c_str(), (long) offset, length);
 #endif
   return true;

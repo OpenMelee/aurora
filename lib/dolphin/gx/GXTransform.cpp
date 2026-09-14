@@ -1,4 +1,5 @@
 #include "gx.hpp"
+#include "../../melee_scaffold.hpp"
 #include "__gx.h"
 #include "dolphin/mtx/GeoTypes.h"
 
@@ -7,7 +8,7 @@
 #include <cstring>
 #include <algorithm>
 #include <cmath>
-#if !defined(_WIN32)
+#if !defined(_WIN32) && !defined(__ANDROID__)
 #include <execinfo.h>
 #endif
 
@@ -59,7 +60,7 @@ static bool melee_trace_vp_enabled() { return melee_trace_vp_level() > 0; }
  * put a conditional breakpoint here on this optimized build. Budgeted so a
  * per-frame bug does not produce a per-frame backtrace. */
 static void melee_trace_vp_backtrace() {
-#if !defined(_WIN32)
+#if !defined(_WIN32) && !defined(__ANDROID__)
   static int budget = 3;
   if (melee_trace_vp_level() < 2 || budget <= 0) {
     return;
@@ -67,7 +68,7 @@ static void melee_trace_vp_backtrace() {
   --budget;
   void* frames[32];
   const int n = backtrace(frames, 32);
-  std::fprintf(stderr, "PROGDBG VP NONFINITE backtrace (%d frames):\n", n);
+  OPENMELEE_PROBE("PROGDBG VP NONFINITE backtrace (%d frames):\n", n);
   backtrace_symbols_fd(frames, n, fileno(stderr));
 #endif
 }
@@ -87,7 +88,7 @@ static void melee_trace_vp(GXProjectionType type, const f32* projVec) {
   std::memcpy(lastProj, projVec, sizeof(lastProj));
   std::memcpy(lastVp, vp, sizeof(lastVp));
   primed = true;
-  std::fprintf(stderr,
+  OPENMELEE_PROBE(
                "PROGDBG VP type=%d vp=[l=%g t=%g w=%g h=%g nz=%g fz=%g] "
                "proj=[%g %g %g %g %g %g]\n",
                static_cast<int>(type), vp[0], vp[1], vp[2], vp[3], vp[4], vp[5], projVec[1], projVec[2],
@@ -106,7 +107,7 @@ void GXSetProjection(const void* mtx_, GXProjectionType type) {
   const auto& mtx = *reinterpret_cast<const aurora::Mat4x4<float>*>(mtx_);
   if (melee_trace_proj_count < melee_trace_mtx_budget()) {
     ++melee_trace_proj_count;
-    std::fprintf(stderr,
+    OPENMELEE_PROBE(
                  "PROGDBG PROJ type=%d [%g %g %g %g][%g %g %g %g][%g %g %g %g][%g %g %g %g]\n",
                  static_cast<int>(type), mtx[0][0], mtx[0][1], mtx[0][2], mtx[0][3], mtx[1][0], mtx[1][1],
                  mtx[1][2], mtx[1][3], mtx[2][0], mtx[2][1], mtx[2][2], mtx[2][3], mtx[3][0], mtx[3][1],
@@ -159,7 +160,7 @@ void GXLoadPosMtxImm(const void* mtx_, u32 id) {
   const auto* mtx = reinterpret_cast<const f32*>(mtx_);
   if (melee_trace_pos_count < melee_trace_mtx_budget()) {
     ++melee_trace_pos_count;
-    std::fprintf(stderr, "PROGDBG POSMTX id=%u [%g %g %g %g][%g %g %g %g][%g %g %g %g]\n", id, mtx[0], mtx[1],
+    OPENMELEE_PROBE("PROGDBG POSMTX id=%u [%g %g %g %g][%g %g %g %g][%g %g %g %g]\n", id, mtx[0], mtx[1],
                  mtx[2], mtx[3], mtx[4], mtx[5], mtx[6], mtx[7], mtx[8], mtx[9], mtx[10], mtx[11]);
   }
 

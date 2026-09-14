@@ -1,4 +1,5 @@
 #include "gx.hpp"
+#include "../../melee_scaffold.hpp"
 #include "__gx.h"
 
 #include <cstdio>
@@ -188,7 +189,7 @@ void GXLoadLightObjImm(GXLightObj* light_, GXLightID id) {
         Snap& s = sLast[idx];
         if (!s.valid || s.color != colorPacked || s.px != light->px || s.py != light->py || s.pz != light->pz ||
             s.nx != light->nx || s.ny != light->ny || s.nz != light->nz) {
-          std::fprintf(stderr, "PROGDBG GXLIGHT frame=%u slot=%u col=%08x pos=%.1f,%.1f,%.1f dir=%.2f,%.2f,%.2f\n",
+          OPENMELEE_PROBE("PROGDBG GXLIGHT frame=%u slot=%u col=%08x pos=%.1f,%.1f,%.1f dir=%.2f,%.2f,%.2f\n",
                        VIGetRetraceCount(), idx, colorPacked, light->px, light->py, light->pz,
                        light->nx, light->ny, light->nz);
           s = Snap{colorPacked, light->px, light->py, light->pz, light->nx, light->ny, light->nz, true};
@@ -197,7 +198,7 @@ void GXLoadLightObjImm(GXLightObj* light_, GXLightID id) {
     }
   }
   if (openmelee_gxlog_active()) {
-    std::fprintf(stderr,
+    OPENMELEE_PROBE(
                  "PROGDBG GXLOG frame=%u LOAD slot=%u col=%02x%02x%02x%02x a=%.3f,%.3f,%.3f k=%.3f,%.3f,%.3f "
                  "pos=%.1f,%.1f,%.1f dir=%.3f,%.3f,%.3f\n",
                  VIGetRetraceCount(), idx, light->color.r, light->color.g, light->color.b, light->color.a, light->a0,
@@ -256,7 +257,7 @@ void GXSetChanAmbColor(GXChannelID id, GXColor color) {
   u32 packed = (static_cast<u32>(color.r) << 24) | (static_cast<u32>(color.g) << 16) |
                (static_cast<u32>(color.b) << 8) | static_cast<u32>(color.a);
   if (openmelee_gxlog_active()) {
-    std::fprintf(stderr, "PROGDBG GXLOG frame=%u AMB id=%d col=%08x\n", VIGetRetraceCount(), (int)id, packed);
+    OPENMELEE_PROBE("PROGDBG GXLOG frame=%u AMB id=%d col=%08x\n", VIGetRetraceCount(), (int)id, packed);
   }
   if (id == GX_COLOR0 || id == GX_ALPHA0) {
     __gx->ambColor[0] = packed;
@@ -284,7 +285,7 @@ void GXSetChanMatColor(GXChannelID id, GXColor color) {
   u32 packed = (static_cast<u32>(color.r) << 24) | (static_cast<u32>(color.g) << 16) |
                (static_cast<u32>(color.b) << 8) | static_cast<u32>(color.a);
   if (openmelee_gxlog_active()) {
-    std::fprintf(stderr, "PROGDBG GXLOG frame=%u MAT id=%d col=%08x\n", VIGetRetraceCount(), (int)id, packed);
+    OPENMELEE_PROBE("PROGDBG GXLOG frame=%u MAT id=%d col=%08x\n", VIGetRetraceCount(), (int)id, packed);
   }
   if (id == GX_COLOR0 || id == GX_ALPHA0) {
     __gx->matColor[0] = packed;
@@ -351,7 +352,7 @@ void GXSetChanCtrl(GXChannelID id, bool lightingEnabled, GXColorSrc ambSrc, GXCo
   CHECK(id >= GX_COLOR0 && id <= GX_ALPHA1, "bad channel {}", static_cast<int>(id));
 
   if (openmelee_gxlog_active()) {
-    std::fprintf(stderr, "PROGDBG GXLOG frame=%u CHAN id=%d en=%d amb=%d mat=%d mask=%02x df=%d af=%d\n",
+    OPENMELEE_PROBE("PROGDBG GXLOG frame=%u CHAN id=%d en=%d amb=%d mat=%d mask=%02x df=%d af=%d\n",
                  VIGetRetraceCount(), (int)id, (int)lightingEnabled, (int)ambSrc, (int)matSrc, lightState, (int)diffFn,
                  (int)attnFn);
   }

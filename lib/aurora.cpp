@@ -1,4 +1,5 @@
 #include <aurora/aurora.h>
+#include "melee_scaffold.hpp"
 
 #ifdef AURORA_ENABLE_GX
 #include "gfx/common.hpp"
@@ -257,7 +258,7 @@ void write_frame_dump(const FrameDump& dump) {
     std::fwrite(rgb.data(), 1, rgb.size(), f);
     std::fclose(f);
   }
-  std::fprintf(stderr, "PROGDBG FRAMEDUMP frame=%llu %ux%u format=%u nonBlackPixels=%llu -> %s\n",
+  OPENMELEE_PROBE("PROGDBG FRAMEDUMP frame=%llu %ux%u format=%u nonBlackPixels=%llu -> %s\n",
                static_cast<unsigned long long>(dump.frame), dump.width, dump.height,
                static_cast<uint32_t>(dump.format), static_cast<unsigned long long>(nonBlack), path);
 }

@@ -1,4 +1,5 @@
 #include "gx.hpp"
+#include "../../melee_scaffold.hpp"
 #include "__gx.h"
 
 #include "../../gx/fifo.hpp"
@@ -73,7 +74,7 @@ void GXCallDisplayList(const void* data, u32 nbytes) {
     }
     if (count < budget) {
       ++count;
-      std::fprintf(stderr, "PROGDBG CallDL #%d fifoPos=%u nbytes=%u data=%p\n", count,
+      OPENMELEE_PROBE("PROGDBG CallDL #%d fifoPos=%u nbytes=%u data=%p\n", count,
                    aurora::gx::fifo::get_buffer_size(), nbytes, data);
     }
   }
