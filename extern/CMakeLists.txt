@@ -15,7 +15,9 @@ endif ()
 option(AURORA_NO_SYSTEM_PACKAGES "Never satisfy a dependency from the host system; always fetch the pinned source" OFF)
 
 function(aurora_find_package_global)
-  if (AURORA_NO_SYSTEM_PACKAGES)
+  # zlib stays a host library even for producers: it is not one of the packaged
+  # dependencies and every consumer platform provides it.
+  if (AURORA_NO_SYSTEM_PACKAGES AND NOT "${ARGV0}" STREQUAL "ZLIB")
     return()
   endif ()
   set(_PREV_FIND_PACKAGE_TARGETS_GLOBAL ${CMAKE_FIND_PACKAGE_TARGETS_GLOBAL})
