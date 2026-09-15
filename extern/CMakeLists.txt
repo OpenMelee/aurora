@@ -9,7 +9,15 @@ else ()
   set(_USE_SHARED OFF)
 endif ()
 
+# A producer that packages hash-locked dependency sources for consumers must
+# fetch every one of them rather than borrow whatever the host happens to have
+# installed; OpenMelee's consumer-producer configure turns this on.
+option(AURORA_NO_SYSTEM_PACKAGES "Never satisfy a dependency from the host system; always fetch the pinned source" OFF)
+
 function(aurora_find_package_global)
+  if (AURORA_NO_SYSTEM_PACKAGES)
+    return()
+  endif ()
   set(_PREV_FIND_PACKAGE_TARGETS_GLOBAL ${CMAKE_FIND_PACKAGE_TARGETS_GLOBAL})
   set(CMAKE_FIND_PACKAGE_TARGETS_GLOBAL ON)
   find_package(${ARGV})
@@ -264,7 +272,7 @@ if (AURORA_ENABLE_GX)
     if (NOT TARGET zstd::libzstd)
       # A host pkg-config result is not a valid Android dependency: it
       # supplies host headers/libs while the target is aarch64 Android.
-      if(NOT ANDROID)
+      if(NOT ANDROID AND NOT AURORA_NO_SYSTEM_PACKAGES)
         find_package(PkgConfig QUIET)
         if(PkgConfig_FOUND)
           pkg_check_modules(ZSTD libzstd IMPORTED_TARGET GLOBAL)
